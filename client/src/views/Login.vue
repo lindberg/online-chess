@@ -36,23 +36,24 @@ export default {
         }),
       })
         .then((resp) => {
+          console.log(resp);
           if (resp.ok) return resp;
           this.$store.commit('setIsAuthenticated', false);
           this.error = 'Username or password incorrect!';
           this.password = '';
-          // throw new Error(resp.text);
+
+          throw new Error(resp.statusText);
           /*
           this.$router.push({
             path: 'login',
           });
           throw new Error(resp.text);
           */
-          return 0;
         })
         .then(() => {
           this.$store.commit('setIsAuthenticated', true);
           this.$router.push({
-            path: 'list',
+            path: 'lobby',
           });
         })
         .catch((error) => {
