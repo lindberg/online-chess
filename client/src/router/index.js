@@ -4,6 +4,7 @@ import ListView from '../views/List.vue';
 import SlotView from '../views/Slot.vue';
 import LoginView from '../views/Login.vue';
 import ProfileView from '../views/Profile.vue';
+import RegisterView from '../views/Register.vue';
 // import store from '../store';
 
 Vue.use(VueRouter);
@@ -14,6 +15,7 @@ const routes = [
   { path: '/slot/:slotName', component: SlotView },
   { path: '/login', component: LoginView },
   { path: '/profile', component: ProfileView },
+  { path: '/register', component: RegisterView },
 ];
 
 const router = new VueRouter({

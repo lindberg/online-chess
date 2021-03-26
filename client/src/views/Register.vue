@@ -1,31 +1,33 @@
 
 <template>
   <div class="text-box col-md-4 col-md-offset-4" style="text-align: center">
-    <h1>Login</h1>
+    <h1>Register</h1>
     <form v-on:submit.prevent="done()">
       <p class="error" v-if="error !== ''">{{error}}</p>
       Username
       <input class="form-control" type="text" v-model="name" required autofocus />
       Password
       <input class="form-control" type="password" v-model="password" required />
-      <input class="btn btn-default" style="margin-top: 5px;" type="submit" value="Login" />
+      Confirm password
+      <input class="form-control" type="password" v-model="confirmPassword" required />
+      <input class="btn btn-default" style="margin-top: 5px;" type="submit" value="Register" />
     </form>
-    Don't have and account yet? <a href="#/register">Register now!</a>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Login',
+  name: 'Register',
   components: {},
   data: () => ({
     name: '',
     password: '',
+    confirmPassword: '',
     error: '',
   }),
   methods: {
     done() {
-      fetch('/api/authenticate', {
+      fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,30 +35,24 @@ export default {
         body: JSON.stringify({
           username: this.name,
           password: this.password,
+          confirmPassword: this.confirmPassword,
         }),
       })
+        .then(resp => resp.json())
         .then((resp) => {
-          if (resp.ok) return resp;
-          this.$store.commit('setIsAuthenticated', false);
-          this.error = 'Username or password incorrect!';
+          if (resp.error.length === 0) return resp;
+          this.error = resp.error;
           this.password = '';
-          // throw new Error(resp.text);
-          /*
-          this.$router.push({
-            path: 'login',
-          });
           throw new Error(resp.text);
-          */
-          return 0;
         })
         .then(() => {
           this.$store.commit('setIsAuthenticated', true);
           this.$router.push({
-            path: 'profile',
+            path: 'login',
           });
         })
         .catch((error) => {
-          console.error('Authentication failed unexpectedly');
+          console.error('Registration failed unexpectedly');
           throw error;
         });
     },

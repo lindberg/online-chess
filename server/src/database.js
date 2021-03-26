@@ -12,10 +12,13 @@ db.serialize(() => {
   db.run('CREATE TABLE timeslots(name TEXT PRIMARY KEY, assistant_name TEXT, booked_by TEXT)');
 
 
+  
   const statement = db.prepare('INSERT INTO users (name, password) VALUES (?, ?)');
-  statement.run('adam', '123');
-  statement.run('testuser', '123');
+  statement.run('cabab1', '$2b$10$RRHadrLDw59aUCsD45vN4.hWZnBg3O7BjQt1d2ftFR8NBeQeJIx2.');
+  //statement.run('adam', '123');
+  //statement.run('testuser', '123');
   statement.finalize();
+  
 });
 
 
