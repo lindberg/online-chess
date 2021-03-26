@@ -63,7 +63,7 @@ router.post('/authenticate', (req, res) => {
   console.log('Processing api login request');
 
   // fetch user and verify password
-  db.get('SELECT * FROM admins WHERE name = (?) AND password = (?)', req.body.username, req.body.password, (err, user) => {
+  db.get('SELECT * FROM users WHERE name = (?) AND password = (?)', req.body.username, req.body.password, (err, user) => {
     if (err) { throw new Error(err); }
     if (user === undefined) {
       model.httpResponse(res, 401);

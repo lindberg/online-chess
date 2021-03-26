@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import ListView from '../views/List.vue';
 import SlotView from '../views/Slot.vue';
 import LoginView from '../views/Login.vue';
-import AdminView from '../views/Admin.vue';
+import ProfileView from '../views/Profile.vue';
 // import store from '../store';
 
 Vue.use(VueRouter);
@@ -13,7 +13,7 @@ const routes = [
   { path: '/list', component: ListView },
   { path: '/slot/:slotName', component: SlotView },
   { path: '/login', component: LoginView },
-  { path: '/admin', component: AdminView },
+  { path: '/profile', component: ProfileView },
 ];
 
 const router = new VueRouter({

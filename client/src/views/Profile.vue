@@ -2,7 +2,7 @@
 <template>
   <div v-if="loaded" class="container">
     <section class="col-md-10 col-md-offset-1" style="text-align: center;">
-      <h1>Admin page for {{ username }}</h1>
+      <h1>Profile for {{ username }}</h1>
       <div class="well">
         <button v-on:click="logout()">Logout</button>
       </div>
@@ -38,7 +38,7 @@
 
 <script>
 export default {
-  name: 'Admin',
+  name: 'Profile',
   components: {},
   data: () => ({
     loaded: false,
@@ -57,7 +57,7 @@ export default {
         });
     },
     removeSlot(slotName) {
-      fetch('/api/admin/removeSlot', {
+      fetch('/api/profile/removeSlot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export default {
     addSlot() {
       console.log(this.newSlotName);
 
-      fetch('/api/admin/addSlot', {
+      fetch('/api/profile/addSlot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

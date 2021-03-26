@@ -1,7 +1,7 @@
 
 <template>
   <div class="text-box col-md-4 col-md-offset-4" style="text-align: center">
-    <h1>Admin login</h1>
+    <h1>Login</h1>
     <form v-on:submit.prevent="done()">
       <p class="error" v-if="error !== ''">{{error}}</p>
       Username
@@ -50,7 +50,7 @@ export default {
         .then(() => {
           this.$store.commit('setIsAuthenticated', true);
           this.$router.push({
-            path: 'admin',
+            path: 'profile',
           });
         })
         .catch((error) => {

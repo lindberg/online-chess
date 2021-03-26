@@ -25,8 +25,8 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-brand-centered">
           <ul class="nav navbar-nav">
-            <li v-on:click="redirect('/admin')">
-              <a style="cursor: pointer;">Admin</a>
+            <li v-on:click="redirect('/profile')">
+              <a style="cursor: pointer;">Profile</a>
             </li>
             <li v-on:click="redirect('/list')">
               <a style="cursor: pointer;">Time slots</a>
