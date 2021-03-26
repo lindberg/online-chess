@@ -51,8 +51,9 @@ export default {
     logout() {
       fetch('/api/logout')
         .then(() => {
+          this.$store.commit('setIsAuthenticated', false);
           this.$router.push({
-            path: '/list',
+            path: '/login',
           });
         });
     },
