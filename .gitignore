@@ -1,6 +1,15 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/vscode,windows,node
-# Edit at https://www.toptal.com/developers/gitignore?templates=vscode,windows,node
+# Created by https://www.toptal.com/developers/gitignore/api/vscode,windows,node,database
+# Edit at https://www.toptal.com/developers/gitignore?templates=vscode,windows,node,database
+
+### Database ###
+*.accdb
+*.db
+*.dbf
+*.mdb
+*.pdb
+*.sqlite3
+*.sqlite
 
 ### Node ###
 # Logs
@@ -162,4 +171,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/vscode,windows,node
+# End of https://www.toptal.com/developers/gitignore/api/vscode,windows,node,database
