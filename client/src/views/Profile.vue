@@ -4,6 +4,11 @@
     <section class="col-md-10 col-md-offset-1" style="text-align: center;">
       <h1>{{ username }}'s profile</h1>
       <div class="well">
+        <p>Wins: {{ userWins }}</p>
+        <p>Draws: {{ userDraws }}</p>
+        <p>Losses: {{ userLosses }}</p>
+      </div>
+      <div class="well">
         Add new slot:
         <form v-on:submit.prevent="addSlot()">
           <input class="form-control" type="text" v-model="newSlotName" required autofocus />
@@ -40,6 +45,9 @@ export default {
   data: () => ({
     loaded: false,
     username: '',
+    userWins: 0,
+    userLosses: 0,
+    userDraws: 0,
     slots: [],
     error: '',
     newSlotName: '',
@@ -125,6 +133,9 @@ export default {
         console.log(resp);
         if (resp.isAuthenticated) {
           this.username = resp.username;
+          this.userWins = resp.userWins;
+          this.userLosses = resp.userLosses;
+          this.userDraws = resp.userDraws;
           this.updateUserSlots(resp.list);
           this.loaded = true;
         } else {

@@ -35,13 +35,30 @@ const requireAuth = (req, res, next) => {
 router.get('/isAuthenticated', (req, res) => {
   const maybeUser = model.findUser(req.session.userID);
 
-  const slots = model.getSlots();
   // const slots = model.getAssistantSlots(req.session.userID);
 
-  model.httpResponse(res, 200, {
-    isAuthenticated: maybeUser !== undefined,
-    username: maybeUser !== undefined ? maybeUser.name : 'N/A',
-    list: slots,
+  console.log("user: " + req.session.userID);
+  db.get('SELECT * FROM users WHERE name = (?)', req.session.userID, (err, user) => {
+    if (err) { throw new Error(err); }
+    if (!user) {
+      error = "Username incorrect";
+      console.log('Username incorrect!');
+
+      model.httpResponse(res, 401);
+      console.log("TEST222: " + error);
+      return;
+    }
+
+    const slots = model.getSlots();
+
+    model.httpResponse(res, 200, {
+      isAuthenticated: maybeUser !== undefined,
+      username: maybeUser !== undefined ? maybeUser.name : 'N/A',
+      userWins: user.wins,
+      userLosses: user.losses,
+      userDraws: user.draws,
+      list: slots,
+    });
   });
 
   console.log('Sending the thing');

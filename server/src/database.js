@@ -8,7 +8,7 @@ db.serialize(() => {
 
   db.run('DROP TABLE IF EXISTS users');
   db.run('DROP TABLE IF EXISTS timeslots');
-  db.run('CREATE TABLE users(name TEXT PRIMARY KEY, password TEXT, wins INTEGER DEFAULT 0, losses INTEGER DEFAULT 0)');
+  db.run('CREATE TABLE users(name TEXT PRIMARY KEY, password TEXT, wins INTEGER DEFAULT 0, losses INTEGER DEFAULT 0, draws INTEGER DEFAULT 0)');
   db.run('CREATE TABLE timeslots(name TEXT PRIMARY KEY, assistant_name TEXT, booked_by TEXT)');
 
 
