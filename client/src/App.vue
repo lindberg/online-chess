@@ -24,18 +24,20 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-brand-centered">
-          <ul class="nav navbar-nav">
+          <ul class="nav navbar-nav" style="float: right;">
             <li v-if="!$store.state.isAuthenticated" v-on:click="redirect('/login')">
               <a style="cursor: pointer;">Login</a>
             </li>
             <li v-if="$store.state.isAuthenticated" v-on:click="redirect('/profile')">
               <a style="cursor: pointer;">Profile</a>
             </li>
-            <li v-if="$store.state.isAuthenticated" v-on:click="redirect('/lobby')">
-              <a style="cursor: pointer;">Play chess</a>
-            </li>
             <li v-if="$store.state.isAuthenticated" v-on:click="logout()">
               <a style="cursor: pointer;">Logout</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li v-if="$store.state.isAuthenticated" v-on:click="redirect('/lobby')">
+              <a style="cursor: pointer;">Play chess</a>
             </li>
           </ul>
         </div>

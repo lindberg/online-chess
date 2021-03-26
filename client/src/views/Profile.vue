@@ -2,7 +2,7 @@
 <template>
   <div v-if="loaded" class="container">
     <section class="col-md-10 col-md-offset-1" style="text-align: center;">
-      <h1>Profile for {{ username }}</h1>
+      <h1>{{ username }}'s profile</h1>
       <div class="well">
         Add new slot:
         <form v-on:submit.prevent="addSlot()">
