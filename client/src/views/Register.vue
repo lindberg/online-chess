@@ -46,7 +46,7 @@ export default {
           throw new Error(resp.text);
         })
         .then(() => {
-          this.$store.commit('setIsAuthenticated', true);
+          // this.$store.commit('setIsAuthenticated', true);
           this.$router.push({
             path: 'login',
           });

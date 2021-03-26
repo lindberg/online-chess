@@ -2,7 +2,7 @@
   <div class="container">
     <section class="col-md-10 col-md-offset-1">
       <div class="row" style="text-align: center;">
-        <h1>All time slots</h1>
+        <h1>Play chess</h1>
       </div>
 
       <div class="row">
@@ -28,7 +28,7 @@
 
 <script>
 export default {
-  name: 'List',
+  name: 'Lobby',
   components: {},
   data: () => ({
     slots: [],

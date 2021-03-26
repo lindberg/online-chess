@@ -52,7 +52,7 @@ export default {
         .then(() => {
           this.$store.commit('setIsAuthenticated', true);
           this.$router.push({
-            path: 'profile',
+            path: 'list',
           });
         })
         .catch((error) => {

@@ -4,9 +4,6 @@
     <section class="col-md-10 col-md-offset-1" style="text-align: center;">
       <h1>Profile for {{ username }}</h1>
       <div class="well">
-        <button v-on:click="logout()">Logout</button>
-      </div>
-      <div class="well">
         Add new slot:
         <form v-on:submit.prevent="addSlot()">
           <input class="form-control" type="text" v-model="newSlotName" required autofocus />
@@ -48,15 +45,6 @@ export default {
     newSlotName: '',
   }),
   methods: {
-    logout() {
-      fetch('/api/logout')
-        .then(() => {
-          this.$store.commit('setIsAuthenticated', false);
-          this.$router.push({
-            path: '/login',
-          });
-        });
-    },
     removeSlot(slotName) {
       fetch('/api/profile/removeSlot', {
         method: 'POST',

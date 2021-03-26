@@ -16,7 +16,7 @@ The files you should care about are located in the `src` (source) folder:
 
 **store/index.js:** This file contains the global storage of your application. You can think of it as some sort of database that gets emptied whenever you reload the page. Its purpose is to make sure that the apps state is stored in a single place and not scattered to the four winds.
 
-**router/index.js:** This files contains the logic that determine what view should be shown to the user depending on what URL the user has visited. For example `localhost:8989/#/list` will display the `List.vue` component to the user.
+**router/index.js:** This files contains the logic that determine what view should be shown to the user depending on what URL the user has visited. For example `localhost:8989/#/lobby` will display the `Lobby.vue` component to the user.
 
 **assets/*:** This is where you put any images or other none code assets that you want to include in your application.
 

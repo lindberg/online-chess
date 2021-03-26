@@ -51,15 +51,15 @@ export default {
         }),
       }).catch(console.error);
 
-      this.$router.push('/list');
+      this.$router.push('/lobby');
     },
     cancel() {
-      this.$router.push('/list');
+      this.$router.push('/lobby');
     },
   },
   created() {
     this.timeout = setTimeout(() => {
-      this.$router.push('/list');
+      this.$router.push('/lobby');
     }, 20000);
     /*
     this.socket = this.$root.socket;

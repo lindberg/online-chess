@@ -16,20 +16,26 @@
             <span class="icon-bar"></span>
           </button>
           <div
-            v-on:click="redirect('/list')"
+            v-on:click="redirect('/lobby')"
             class="navbar-brand navbar-brand-centered"
             style="line-height: 1em; cursor: pointer;"
-          >Booking</div>
+          >Online Chess</div>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-brand-centered">
           <ul class="nav navbar-nav">
-            <li v-on:click="redirect('/profile')">
+            <li v-if="!$store.state.isAuthenticated" v-on:click="redirect('/login')">
+              <a style="cursor: pointer;">Login</a>
+            </li>
+            <li v-if="$store.state.isAuthenticated" v-on:click="redirect('/profile')">
               <a style="cursor: pointer;">Profile</a>
             </li>
-            <li v-on:click="redirect('/list')">
-              <a style="cursor: pointer;">Time slots</a>
+            <li v-if="$store.state.isAuthenticated" v-on:click="redirect('/lobby')">
+              <a style="cursor: pointer;">Play chess</a>
+            </li>
+            <li v-if="$store.state.isAuthenticated" v-on:click="logout()">
+              <a style="cursor: pointer;">Logout</a>
             </li>
           </ul>
         </div>
@@ -46,6 +52,15 @@ export default {
   methods: {
     redirect(target) {
       this.$router.push(target);
+    },
+    logout() {
+      fetch('/api/logout')
+        .then(() => {
+          this.$store.commit('setIsAuthenticated', false);
+          this.$router.push({
+            path: '/login',
+          });
+        });
     },
   },
 };
