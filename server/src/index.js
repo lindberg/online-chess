@@ -57,9 +57,9 @@ This will serve static files from the public directory, starting with index.html
 // Bind REST controllers to /api/*
 const auth = require('./controllers/auth.controller.js');
 const booking = require('./controllers/booking.controller.js');
-const profile = require('./controllers/profile.controller.js');
+const user = require('./controllers/user.controller.js');
 
-app.use('/api/profile', auth.requireAuth, profile.router);
+app.use('/api/user', auth.requireAuth, user.router);
 app.use('/api', auth.router);
 // All chat endpoints require the user to be authenticated
 app.use('/', booking.router);

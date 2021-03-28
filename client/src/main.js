@@ -19,6 +19,7 @@ Vue.config.productionTip = false;
     render: h => h(App),
     data: {
       socket: io().connect(),
+      currentRoom: null,
     },
   }).$mount('#app');
 })();

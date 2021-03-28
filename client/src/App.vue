@@ -132,16 +132,8 @@ div.light-blue-background {
   background-color: #c5e7ff;
 }
 
-.slot-available {
+.room-available {
   background-color: #c3e6cb;
-}
-
-.slot-reserved {
-  background-color: #ffeeba;
-}
-
-.slot-booked {
-  background-color: #f5c6cb;
 }
 
 button {

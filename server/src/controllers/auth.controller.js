@@ -35,7 +35,7 @@ const requireAuth = (req, res, next) => {
 router.get('/isAuthenticated', (req, res) => {
   const maybeUser = model.findUser(req.session.userID);
 
-  // const slots = model.getAssistantSlots(req.session.userID);
+  // const rooms = model.getAssistantRooms(req.session.userID);
 
   console.log("user: " + req.session.userID);
   db.get('SELECT * FROM users WHERE name = (?)', req.session.userID, (err, user) => {
@@ -49,7 +49,7 @@ router.get('/isAuthenticated', (req, res) => {
       return;
     }
 
-    const slots = model.getSlots();
+    const rooms = model.getRooms();
 
     model.httpResponse(res, 200, {
       isAuthenticated: maybeUser !== undefined,
@@ -57,7 +57,7 @@ router.get('/isAuthenticated', (req, res) => {
       userWins: user.wins,
       userLosses: user.losses,
       userDraws: user.draws,
-      list: slots,
+      list: rooms,
     });
   });
 
@@ -127,7 +127,8 @@ router.post('/authenticate', (req, res) => {
     // Load hash from your password DB.
     bcrypt.compare(req.body.password, user.password).then((result) => {
       if (result) {
-        model.addUser(req.body.username, req.session.socketID);
+        model.addUser(user.name, user.currentRoom, req.session.socketID);
+        console.log('THE SOCKET ID: ' + req.session.socketID);
 
         // Update the userID of the currently active session
         // console.log(req.session);
@@ -137,7 +138,10 @@ router.post('/authenticate', (req, res) => {
           else console.debug(`Saved userID: ${req.session.userID}`);
         });
 
-        model.httpResponse(res, 200);
+        model.httpResponse(res, 200, {
+          username: user.name,
+          currentRoom: user.currentRoom,
+        });
         console.log("TEST");
         return;
       }

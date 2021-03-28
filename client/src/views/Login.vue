@@ -36,7 +36,6 @@ export default {
         }),
       })
         .then((resp) => {
-          console.log(resp);
           if (resp.ok) return resp;
           this.$store.commit('setIsAuthenticated', false);
           this.error = 'Username or password incorrect!';
@@ -50,7 +49,9 @@ export default {
           throw new Error(resp.text);
           */
         })
-        .then(() => {
+        .then(resp => resp.json())
+        .then((resp) => {
+          this.$store.commit('setCurrentRoom', resp.currentRoom);
           this.$store.commit('setIsAuthenticated', true);
           this.$router.push({
             path: 'lobby',

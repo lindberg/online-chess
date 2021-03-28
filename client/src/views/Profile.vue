@@ -9,27 +9,27 @@
         <p>Losses: {{ userLosses }}</p>
       </div>
       <div class="well">
-        Add new slot:
-        <form v-on:submit.prevent="addSlot()">
-          <input class="form-control" type="text" v-model="newSlotName" required autofocus />
+        Add new room:
+        <form v-on:submit.prevent="addRoom()">
+          <input class="form-control" type="text" v-model="newRoomName" required autofocus />
           <input class="btn btn-default" style="margin-top: 5px;" type="submit" value="Add" />
           <p v-if="error !== ''" class="error">{{ error }}</p>
         </form>
       </div>
       <div class="row">
         <div
-          v-for="slot in slots"
+          v-for="room in rooms"
           class="well"
-          :class="getStatusClass(slot.status)"
-          :key="slot.name"
+          :class="getStatusClass(room.status)"
+          :key="room.name"
         >
           <div class="row" style="text-align: center;">
             <h4>
-              <span>{{ slot.name }}</span>
-              <span v-if="slot.booked_by !== ''">
-                (booked by {{ slot.booked_by }})
+              <span>{{ room.name }}</span>
+              <span v-if="room.booked_by !== ''">
+                (booked by {{ room.booked_by }})
               </span>
-              <div><button v-on:click="removeSlot(slot.name)">Remove slot</button></div>
+              <div><button v-on:click="removeRoom(room.name)">Remove room</button></div>
             </h4>
           </div>
         </div>
@@ -48,69 +48,69 @@ export default {
     userWins: 0,
     userLosses: 0,
     userDraws: 0,
-    slots: [],
+    rooms: [],
     error: '',
-    newSlotName: '',
+    newRoomName: '',
   }),
   methods: {
-    removeSlot(slotName) {
-      fetch('/api/profile/removeSlot', {
+    removeRoom(roomName) {
+      fetch('/api/user/removeRoom', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: slotName,
+          name: roomName,
         }),
       })
         .then((resp) => {
           if (resp.ok) {
-            this.slots = Object.values(this.slots)
-              .filter(slot => slot.name !== slotName)
-              .reduce((res, slot) => ({ ...res, [slot.name]: slot }), {});
+            this.rooms = Object.values(this.rooms)
+              .filter(room => room.name !== roomName)
+              .reduce((res, room) => ({ ...res, [room.name]: room }), {});
           }
         })
         .catch((error) => {
-          console.error('Removing a slot failed unexpectedly');
+          console.error('Removing a room failed unexpectedly');
           throw error;
         });
     },
-    addSlot() {
-      console.log(this.newSlotName);
+    addRoom() {
+      console.log(this.newRoomName);
 
-      fetch('/api/profile/addSlot', {
+      fetch('/api/user/addRoom', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: this.newSlotName,
+          name: this.newRoomName,
         }),
       })
         .then(res => res.json())
         .then((resp) => {
-          if (resp.slot) {
-            this.newSlotName = '';
+          if (resp.room) {
+            this.newRoomName = '';
           } else {
             this.error = resp.error;
           }
         })
         .catch((error) => {
-          console.error('Adding a slot failed unexpecedly');
+          console.error('Adding a room failed unexpecedly');
           throw error;
         });
     },
     getStatusClass(status) {
-      if (status === 'available') return 'slot-available';
-      if (status === 'reserved') return 'slot-reserved';
-      return 'slot-booked';
+      if (status === 'available') return 'room-available';
+      if (status === 'reserved') return 'room-reserved';
+      return 'room-booked';
     },
-    updateUserSlots(slots) {
-      this.slots = [];
-      slots.forEach((slot) => {
-        if (slot.assistant_name === this.username) {
-          // console.log(`${slot.assistant_name} == ${this.username}`);
-          this.slots.push(slot);
+    updateUserRooms(rooms) {
+      this.rooms = [];
+      rooms.forEach((room) => {
+        if (room.assistant_name === this.username) {
+          // console.log(`${room.assistant_name} == ${this.username}`);
+          this.rooms.push(room);
         }
       });
     },
@@ -120,8 +120,8 @@ export default {
     this.socket.on('msg', (msg) => {
       // const msgJson = msg.json();
       // console.log(msg);
-      this.updateUserSlots(msg);
-      // this.slots = msg;
+      this.updateUserRooms(msg);
+      // this.rooms = msg;
       // this.entries = [...this.entries, msg];
     });
 
@@ -136,7 +136,7 @@ export default {
           this.userWins = resp.userWins;
           this.userLosses = resp.userLosses;
           this.userDraws = resp.userDraws;
-          this.updateUserSlots(resp.list);
+          this.updateUserRooms(resp.list);
           this.loaded = true;
         } else {
           this.$store.commit('setIsAuthenticated', false);

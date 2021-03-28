@@ -1,11 +1,11 @@
 const db = require('./database');
-const Slot = require('./models/slot.model');
+const Room = require('./models/room.model');
 const User = require('./models/user.model');
 
 /**
- * slots & users are effectively hash maps with the name of the entry serving as a unique key.
+ * rooms & users are effectively hash maps with the name of the entry serving as a unique key.
  */
-let slots = {};
+let rooms = {};
 let users = {};
 
 /**
@@ -29,14 +29,14 @@ exports.init = ({ io }) => {
 
 exports.fetchFromDB = () => {
   console.log('Fetching from db');
-  db.all('SELECT * FROM timeslots', [], (err, rows) => {
+  db.all('SELECT * FROM timerooms', [], (err, rows) => {
     if (err) { console.log(err.message); }
     rows.forEach((row) => {
       let status = 'available';
       if (row.booked_by !== '') {
         status = 'booked';
       }
-      this.addSlot(row.name, row.assistant_name, row.booked_by, status);
+      this.addRoom(row.name, row.assistant_name, row.booked_by, status);
     });
   });
 };
@@ -63,28 +63,28 @@ const assignUnregisteredSocket = (socketID) => {
 };
 
 /**
- * Add a message to a slot & push out the message to all connected clients
- * @param {String} slotName - The name of the slot to add the message to.
+ * Add a message to a room & push out the message to all connected clients
+ * @param {String} roomName - The name of the room to add the message to.
  * @param {String} message - The message to add.
  * @returns {void}
  */
 /*
- exports.addMessage = (slotName, message) => {
-  // exports.findSlot(slotName).addMessage(message);
-  exports.findSlot(slotName).bookSlot(message);
+ exports.addMessage = (roomName, message) => {
+  // exports.findRoom(roomName).addMessage(message);
+  exports.findRoom(roomName).bookRoom(message);
   // exports.io.emit('msg', message);
 
-  // const slots = this.getSlots();
-  // exports.io.emit('msg', slots);
+  // const rooms = this.getRooms();
+  // exports.io.emit('msg', rooms);
   this.emitListToAll();
-  // res.status(200).json({ list: slots });
+  // res.status(200).json({ list: rooms });
 
-  console.log(slotName, message);
+  console.log(roomName, message);
 };
 */
 
 exports.emitListToAll = () => {
-  exports.io.emit('msg', this.getSlots());
+  exports.io.emit('msg', this.getRooms());
 };
 
 /**
@@ -94,11 +94,11 @@ exports.emitListToAll = () => {
  * @see model.addUnregisteredSocket
  * @returns {void}
  */
-exports.addUser = (name, socketID = undefined) => {
-  users[name] = new User(name);
-  if (socketID !== undefined) {
-    users[name].socket = assignUnregisteredSocket(socketID);
-  }
+exports.addUser = (name, currentRoom, socketID) => {
+  users[name] = new User(name, currentRoom);
+  users[name].socket = assignUnregisteredSocket(socketID);
+  console.log('socket: ' + socketID);
+  console.log('socket: ' + users[name].socket);
 };
 
 /*
@@ -130,8 +130,8 @@ exports.updateUserSocket = (name, socket) => {
 exports.findUser = (name) => users[name];
 
 /**
- * Removes the slot object with the matching name.
- * @param {String} name - The name of the slot.
+ * Removes the room object with the matching name.
+ * @param {String} name - The name of the room.
  * @returns {void}
  */
 
@@ -143,63 +143,65 @@ exports.removeUser = (name) => {
 
 
 /**
- * Creates a slot with the given name.
- * @param {String} name - The name of the slot.
+ * Creates a room with the given name.
+ * @param {String} name - The name of the room.
  * @returns {void}
  */
-exports.addSlot = (name, assistantName, booked_by = '', status = 'available') => {
-  if (this.findSlot(name)) {
+exports.addRoom = (name, assistantName, booked_by = '', status = 'available') => {
+  if (this.findRoom(name)) {
     return;
   }
-  slots[name] = new Slot(name, assistantName, booked_by, status);
+  rooms[name] = new Room(name, assistantName, booked_by, status);
 
-  db.get('SELECT name FROM timeslots WHERE name = (?)', name, (_err, row) => {
+  db.get('SELECT name FROM timerooms WHERE name = (?)', name, (_err, row) => {
     if (row !== undefined) {
       return;
     }
-    db.run('INSERT INTO timeslots (name, assistant_name, booked_by) VALUES(?, ?, ?)', name, assistantName, '', (err) => {
+    db.run('INSERT INTO timerooms (name, assistant_name, booked_by) VALUES(?, ?, ?)', name, assistantName, '', (err) => {
       if (err) { console.log(err.message); }
-      console.log('Added timeslot to db');
+      console.log('Added timeroom to db');
     });
   });
 };
 
 /**
- * Returns the public data for all the Slots.
+ * Returns the public data for all the Rooms.
  * @returns {Object}
  */
-exports.getSlots = () => {
-  const slotData = [];
+exports.getRooms = () => {
+  const roomData = [];
 
   /*
-  for (const [, slot] of Object.entries(slots)) {
-    slotData.push(slot.getPublicData());
+  for (const [, room] of Object.entries(rooms)) {
+    roomData.push(room.getPublicData());
   }
   */
 
-  const entries = Object.entries(slots);
+  const entries = Object.entries(rooms);
 
-  entries.forEach((slot) => {
-    slotData.push(slots[slot[0]].getPublicData());
+  entries.forEach((room) => {
+    if (!rooms[room[0]].playerTwo) {
+      roomData.push(rooms[room[0]].getPublicData());
+    }
   });
 
 
-  return slotData;
+  return roomData;
 
-  // Object.values(slots);
+  // Object.values(rooms);
 };
 
 /**
- * Removes the slot object with the matching name.
- * @param {String} name - The name of the slot.
+ * Removes the room object with the matching name.
+ * @param {String} name - The name of the room.
  * @returns {void}
  */
-exports.removeSlot = (name) => {
-  slots = Object.values(slots)
-    .filter((slot) => slot.name !== name)
-    .reduce((res, slot) => ({ ...res, [slot.name]: slot }), {});
+exports.removeRoom = (name) => {
+  rooms = Object.values(rooms)
+    .filter((room) => room.name !== name)
+    .reduce((res, room) => ({ ...res, [room.name]: room }), {});
 
-  db.get('DELETE FROM timeslots WHERE name = (?)', name, (err) => {
+  db.get('DELETE FROM timerooms WHERE name = (?)', name, (err) => {
     if (err) console.log(err.message);
   });
 };
@@ -219,8 +221,8 @@ exports.httpResponse = (res, code, body = {}) => {
 };
 
 /**
- * Return the slot object with the matching name.
- * @param {String} name - The name of the slot.
- * @returns {Slot}
+ * Return the room object with the matching name.
+ * @param {String} name - The name of the room.
+ * @returns {Room}
  */
-exports.findSlot = (name) => slots[name];
+exports.findRoom = (name) => rooms[name];

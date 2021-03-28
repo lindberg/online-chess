@@ -4,20 +4,25 @@
       <div class="row" style="text-align: center;">
         <h1>Play chess</h1>
       </div>
-
+      <div class="well">
+        Create room:
+        <form v-on:submit.prevent="addRoom()">
+          <input class="form-control" type="text" v-model="newRoomName" required autofocus />
+          <input class="btn btn-default" style="margin-top: 5px;" type="submit" value="Add" />
+          <p v-if="error !== ''" class="error">{{ error }}</p>
+        </form>
+      </div>
       <div class="row">
         <div
-          v-for="slot in slots"
-          class="well"
-          :class="getStatusClass(slot.status)"
-          @click="redirect(slot)"
-          :key="slot.name"
+          v-for="room in rooms"
+          class="well room-available"
+          @click="redirect(room.name)"
+          :key="room.name"
         >
           <div class="row" style="text-align: center;">
             <h4>
-              <span style="color: grey;">{{ slot.assistant_name }}s slot </span>
-              <span>{{ slot.name }}</span>
-              <span v-if="slot.booked_by !== ''"> (booked by {{ slot.booked_by }})</span>
+              <span style="color: grey;">{{ room.ownerName }}s room </span>
+              <span>{{ room.name }}</span>
             </h4>
           </div>
         </div>
@@ -31,18 +36,41 @@ export default {
   name: 'Lobby',
   components: {},
   data: () => ({
-    slots: [],
+    rooms: [],
+    newRoomName: '',
+    error: '',
   }),
   methods: {
-    redirect(slot) {
-      if (slot.status === 'available') {
-        this.$router.push(`/slot/${slot.name}`);
-      }
+    redirect(roomName) {
+      this.$store.commit('setCurrentRoom', roomName);
+      this.$router.push(`/room/${roomName}`);
     },
-    getStatusClass(status) {
-      if (status === 'available') return 'slot-available';
-      if (status === 'reserved') return 'slot-reserved';
-      return 'slot-booked';
+    addRoom() {
+      console.log(this.newRoomName);
+
+      fetch('/api/user/addRoom', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: this.newRoomName,
+        }),
+      })
+        .then(res => res.json())
+        .then((resp) => {
+          if (resp.room) {
+            this.redirect(this.newRoomName);
+            // this.$router.push(`/room/${this.newRoomName}`);
+            // this.newRoomName = '';
+          } else {
+            this.error = resp.error;
+          }
+        })
+        .catch((error) => {
+          console.error('Adding a room failed unexpecedly');
+          throw error;
+        });
     },
   },
   created() {
@@ -50,14 +78,14 @@ export default {
     this.socket.on('msg', (msg) => {
       // const msgJson = msg.json();
       // console.log(msg);
-      this.slots = msg;
+      this.rooms = msg;
       // this.entries = [...this.entries, msg];
     });
 
-    fetch('/slotList')
+    fetch('/roomList')
       .then(res => res.json())
       .then((data) => {
-        this.slots = data.list;
+        this.rooms = data.list;
         // console.log(data);
         console.log(data.list);
       })

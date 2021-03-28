@@ -2,7 +2,7 @@
   <div class="container">
     <section class="col-md-10 col-md-offset-1">
       <div class="row" style="text-align: center; margin-bottom: 10px;">
-        <h1>{{ slot }}</h1>
+        <h1>{{ room }}</h1>
       </div>
       <!--
       <div style="border: 2px solid black">
@@ -26,11 +26,11 @@
 
 <script>
 export default {
-  name: 'Slot',
+  name: 'Room',
   components: {},
   data() {
     return {
-      slot: this.$route.params.slotName,
+      room: this.$route.params.roomName,
       // entries: [],
       reserveID: 0,
       socket: null,
@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     send() {
-      fetch(`/slot/${this.slot}/book`, {
+      fetch(`/room/${this.room}/book`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,20 +58,10 @@ export default {
     },
   },
   created() {
-    this.timeout = setTimeout(() => {
-      this.$router.push('/lobby');
-    }, 20000);
-    /*
-    this.socket = this.$root.socket;
-    this.socket.on('msg', (msg) => {
-      this.entries = [...this.entries, msg];
-    });
-    */
-
-    fetch(`/slot/${this.slot}/join`)
+    fetch(`/room/${this.room}/join`)
       .then((resp) => {
         if (!resp.ok) {
-          throw new Error(`Unexpected failure when joining slot: ${this.slot}`);
+          throw new Error(`Unexpected failure when joining room: ${this.room}`);
         }
         return resp.json();
       })
@@ -85,7 +75,7 @@ export default {
   beforeDestroy() {
     clearTimeout(this.timeout);
 
-    fetch(`/slot/${this.slot}/cancelreservation`, {
+    fetch(`/room/${this.room}/cancelreservation`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
