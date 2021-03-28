@@ -9,6 +9,7 @@ export default new Vuex.Store({
   state: {
     isAuthenticated: false,
     currentRoom: '',
+    username: '',
   },
   mutations: {
     setIsAuthenticated(store, isAuthenticated) {
@@ -16,6 +17,9 @@ export default new Vuex.Store({
     },
     setCurrentRoom(store, roomName) {
       store.currentRoom = roomName;
+    },
+    setUsername(store, username) {
+      store.username = username;
     },
   },
   actions: {

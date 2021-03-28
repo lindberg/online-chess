@@ -52,6 +52,7 @@ export default {
         .then(resp => resp.json())
         .then((resp) => {
           this.$store.commit('setCurrentRoom', resp.currentRoom);
+          this.$store.commit('setUsername', resp.username);
           this.$store.commit('setIsAuthenticated', true);
           this.$router.push({
             path: 'lobby',
