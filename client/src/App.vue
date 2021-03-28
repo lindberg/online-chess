@@ -29,7 +29,7 @@
               <a style="cursor: pointer;">Login</a>
             </li>
             <li v-if="$store.state.isAuthenticated" v-on:click="redirect('/profile')">
-              <a style="cursor: pointer;">Profile</a>
+              <a style="cursor: pointer;">{{ $store.state.username }}</a>
             </li>
             <li v-if="$store.state.isAuthenticated" v-on:click="logout()">
               <a style="cursor: pointer;">Logout</a>
@@ -59,6 +59,7 @@ export default {
       fetch('/api/logout')
         .then(() => {
           this.$store.commit('setIsAuthenticated', false);
+          this.$store.commit('setCurrentRoom', '');
           this.$router.push({
             path: '/login',
           });
