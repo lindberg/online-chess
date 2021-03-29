@@ -144,4 +144,11 @@ button {
 .error {
   color: red;
 }
+
+.white-tile {
+  fill: rgb(172, 172, 172);
+}
+.selected-tile {
+  fill: rgba(255, 243, 73, 0.4);
+}
 </style>

@@ -159,7 +159,7 @@ exports.addRoom = (name) => {
     }
     db.run('INSERT INTO rooms (name) VALUES(?)', name, (err) => {
       if (err) { console.log(err.message); }
-      console.log('Added timeroom to db');
+      console.log('Added room to db');
     });
   });
 };

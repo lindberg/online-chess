@@ -21,12 +21,15 @@ router.get('/roomList', (req, res) => {
  */
 // Det här handlar om bokningsrummet sen (inte en chatt)
 router.get('/room/:room/join', (req, res) => {
+  console.log('room name: ' + req.params.room)
   const room = model.findRoom(req.params.room);
 
-  if (model.findUser(req.session.userID).currentRoom !== '') {
+  if (model.findUser(req.session.userID).currentRoom !== req.params.room) {
+    console.log(req.session.userID + ' access to ' + req.params.room + ' denied');
     return model.httpResponse(res, 404, 'User is already in a room.');
   }
   if (room === undefined) {
+    console.log('room ' + req.params.room + ' does not exist');
     return model.httpResponse(res, 404, `No room with ID: ${req.params.room}`);
   }
 
@@ -38,9 +41,7 @@ router.get('/room/:room/join', (req, res) => {
 
   model.findUser(req.session.userID).setCurrentRoom(room.name);
 
-  res.status(200).json({
-    msg: `Successfully joined room: ${room.name}`,
-  });
+  model.httpResponse(res, 200, room.getPublicData());
 
   model.emitListToAll();
 

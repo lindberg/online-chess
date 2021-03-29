@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    body, html {
+  height: 100%;
+}
+    .white-tile {
+        fill: rgb(184, 174, 140)
+    }
+    .selected-tile {
+        fill: rgba(255, 243, 73, 0.4);
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    
+    <svg width="600px" height="600px" style="background:rgb(255, 246, 203); border: 1px solid rgb(172, 172, 172);">
+        <pattern id="pattern-chess" x="0" y="0" width="150" height="150" patternUnits="userSpaceOnUse">
+            <rect class="white-tile" x="0" width="75" height="75" y="0"></rect>
+            <rect class="white-tile" x="75" width="75" height="75" y="75"></rect>
+        </pattern>
+
+
+        <rect x="0" y="0" width="100%" height="100%" fill="url(#pattern-chess)"></rect>
+        <rect class="selected-tile" x="0" width="75" height="75" y="0"></rect>
+        <rect class="selected-tile" x="150" width="75" height="75" y="75"></rect>
+        <image href="svg_chess_pieces/kb.svg" x="0" y="0" width="72" height="72"/>
+        <image href="svg_chess_pieces/kb.svg" x="75" y="0" width="72" height="72"/>
+    </svg>
+</body>
+</html>

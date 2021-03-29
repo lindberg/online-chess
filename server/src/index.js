@@ -58,7 +58,9 @@ This will serve static files from the public directory, starting with index.html
 const auth = require('./controllers/auth.controller.js');
 const booking = require('./controllers/booking.controller.js');
 const user = require('./controllers/user.controller.js');
+const svgFiles = require('./controllers/svgFiles.controller.js');
 
+app.use('/svg_chess_pieces', svgFiles.router);
 app.use('/api/user', auth.requireAuth, user.router);
 app.use('/api', auth.router);
 // All chat endpoints require the user to be authenticated
