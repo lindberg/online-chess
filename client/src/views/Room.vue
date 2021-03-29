@@ -47,7 +47,6 @@ export default {
         },
         body: JSON.stringify({
           name: this.input,
-          reservationID: this.reservationID,
         }),
       }).catch(console.error);
 
@@ -65,25 +64,7 @@ export default {
         }
         return resp.json();
       })
-      .catch(console.error)
-      .then((data) => {
-        // this.entries = data.list;
-        this.reservationID = parseFloat(data.reservationID);
-        console.log(`reservationID: ${this.reservationID}`);
-      });
-  },
-  beforeDestroy() {
-    clearTimeout(this.timeout);
-
-    fetch(`/room/${this.room}/cancelreservation`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        reservationID: this.reservationID,
-      }),
-    }).catch(console.error);
+      .catch(console.error);
   },
 };
 </script>

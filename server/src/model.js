@@ -29,14 +29,14 @@ exports.init = ({ io }) => {
 
 exports.fetchFromDB = () => {
   console.log('Fetching from db');
-  db.all('SELECT * FROM timerooms', [], (err, rows) => {
+  db.all('SELECT * FROM rooms', [], (err, rows) => {
     if (err) { console.log(err.message); }
     rows.forEach((row) => {
       let status = 'available';
       if (row.booked_by !== '') {
         status = 'booked';
       }
-      this.addRoom(row.name, row.assistant_name, row.booked_by, status);
+      this.addRoom(row.name);
     });
   });
 };
@@ -147,17 +147,17 @@ exports.removeUser = (name) => {
  * @param {String} name - The name of the room.
  * @returns {void}
  */
-exports.addRoom = (name, assistantName, booked_by = '', status = 'available') => {
+exports.addRoom = (name) => {
   if (this.findRoom(name)) {
     return;
   }
-  rooms[name] = new Room(name, assistantName, booked_by, status);
+  rooms[name] = new Room(name);
 
-  db.get('SELECT name FROM timerooms WHERE name = (?)', name, (_err, row) => {
+  db.get('SELECT name FROM rooms WHERE name = (?)', name, (_err, row) => {
     if (row !== undefined) {
       return;
     }
-    db.run('INSERT INTO timerooms (name, assistant_name, booked_by) VALUES(?, ?, ?)', name, assistantName, '', (err) => {
+    db.run('INSERT INTO rooms (name) VALUES(?)', name, (err) => {
       if (err) { console.log(err.message); }
       console.log('Added timeroom to db');
     });
@@ -201,7 +201,7 @@ exports.removeRoom = (name) => {
     .filter((room) => room.name !== name)
     .reduce((res, room) => ({ ...res, [room.name]: room }), {});
 
-  db.get('DELETE FROM timerooms WHERE name = (?)', name, (err) => {
+  db.get('DELETE FROM rooms WHERE name = (?)', name, (err) => {
     if (err) console.log(err.message);
   });
 };

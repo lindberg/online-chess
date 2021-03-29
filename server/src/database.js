@@ -7,9 +7,9 @@ const db = new Database(databasePath);
 db.serialize(() => {
 
   db.run('DROP TABLE IF EXISTS users');
-  db.run('DROP TABLE IF EXISTS timerooms');
+  db.run('DROP TABLE IF EXISTS rooms');
   db.run('CREATE TABLE users(name TEXT PRIMARY KEY, password TEXT, wins INTEGER DEFAULT 0, losses INTEGER DEFAULT 0, draws INTEGER DEFAULT 0, currentRoom TEXT DEFAULT "")');
-  db.run('CREATE TABLE timerooms(name TEXT PRIMARY KEY, assistant_name TEXT, booked_by TEXT)');
+  db.run('CREATE TABLE rooms(name TEXT PRIMARY KEY)');
 
 
   

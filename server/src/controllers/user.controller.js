@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/removeRoom', (req, res) => {
   const room = model.findRoom(req.body.name);
 
-  if (room.assistant_name !== req.session.userID) {
+  if (room.ownerName !== req.session.userID) {
     res.sendStatus(409);
     console.log(`Room ${req.body.name} not owned by ${req.session.userID}!`);
     return;

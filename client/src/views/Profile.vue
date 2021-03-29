@@ -8,32 +8,6 @@
         <p>Draws: {{ userDraws }}</p>
         <p>Losses: {{ userLosses }}</p>
       </div>
-      <div class="well">
-        Add new room:
-        <form v-on:submit.prevent="addRoom()">
-          <input class="form-control" type="text" v-model="newRoomName" required autofocus />
-          <input class="btn btn-default" style="margin-top: 5px;" type="submit" value="Add" />
-          <p v-if="error !== ''" class="error">{{ error }}</p>
-        </form>
-      </div>
-      <div class="row">
-        <div
-          v-for="room in rooms"
-          class="well"
-          :class="getStatusClass(room.status)"
-          :key="room.name"
-        >
-          <div class="row" style="text-align: center;">
-            <h4>
-              <span>{{ room.name }}</span>
-              <span v-if="room.booked_by !== ''">
-                (booked by {{ room.booked_by }})
-              </span>
-              <div><button v-on:click="removeRoom(room.name)">Remove room</button></div>
-            </h4>
-          </div>
-        </div>
-      </div>
     </section>
   </div>
 </template>
@@ -52,69 +26,6 @@ export default {
     error: '',
     newRoomName: '',
   }),
-  methods: {
-    removeRoom(roomName) {
-      fetch('/api/user/removeRoom', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: roomName,
-        }),
-      })
-        .then((resp) => {
-          if (resp.ok) {
-            this.rooms = Object.values(this.rooms)
-              .filter(room => room.name !== roomName)
-              .reduce((res, room) => ({ ...res, [room.name]: room }), {});
-          }
-        })
-        .catch((error) => {
-          console.error('Removing a room failed unexpectedly');
-          throw error;
-        });
-    },
-    addRoom() {
-      console.log(this.newRoomName);
-
-      fetch('/api/user/addRoom', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: this.newRoomName,
-        }),
-      })
-        .then(res => res.json())
-        .then((resp) => {
-          if (resp.room) {
-            this.newRoomName = '';
-          } else {
-            this.error = resp.error;
-          }
-        })
-        .catch((error) => {
-          console.error('Adding a room failed unexpecedly');
-          throw error;
-        });
-    },
-    getStatusClass(status) {
-      if (status === 'available') return 'room-available';
-      if (status === 'reserved') return 'room-reserved';
-      return 'room-booked';
-    },
-    updateUserRooms(rooms) {
-      this.rooms = [];
-      rooms.forEach((room) => {
-        if (room.assistant_name === this.username) {
-          // console.log(`${room.assistant_name} == ${this.username}`);
-          this.rooms.push(room);
-        }
-      });
-    },
-  },
   created() {
     this.socket = this.$root.socket;
     this.socket.on('msg', (msg) => {

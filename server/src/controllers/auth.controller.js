@@ -45,7 +45,6 @@ router.get('/isAuthenticated', (req, res) => {
       console.log('Username incorrect!');
 
       model.httpResponse(res, 401);
-      console.log("TEST222: " + error);
       return;
     }
 
@@ -117,7 +116,6 @@ router.post('/authenticate', (req, res) => {
       console.log('Username incorrect!');
 
       model.httpResponse(res, 401);
-      console.log("TEST222: " + error);
       return;
     }
 
@@ -128,7 +126,6 @@ router.post('/authenticate', (req, res) => {
     bcrypt.compare(req.body.password, user.password).then((result) => {
       if (result) {
         model.addUser(user.name, user.currentRoom, req.session.socketID);
-        console.log('THE SOCKET ID: ' + req.session.socketID);
 
         // Update the userID of the currently active session
         // console.log(req.session);
@@ -142,14 +139,12 @@ router.post('/authenticate', (req, res) => {
           username: user.name,
           currentRoom: user.currentRoom,
         });
-        console.log("TEST");
         return;
       }
       else {
         error = "Password incorrect";
         console.log('Password incorrect!');
         model.httpResponse(res, 401);
-        console.log("TEST222: " + error);
         return;
       }
     });
