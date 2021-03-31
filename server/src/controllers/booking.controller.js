@@ -69,8 +69,8 @@ router.post('/room/:room/movepiece', (req, res) => {
     move = room.chess.move(req.body);
 
     if (room.playerBlack !== '') {
-      model.findUser(room.playerBlack).socket.emit(room.getPublicData());
-      console.log('sending data to black with socketID: ' + model.findUser(room.playerBlack).socket.socketID);
+      model.findUser(room.playerBlack).socket.emit('gameData', room.getPublicData());
+      console.log('sending data to black with socket: ' + model.findUser(room.playerBlack).socket);
     }
     console.log('test2');
   }

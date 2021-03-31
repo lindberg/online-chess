@@ -89,6 +89,25 @@ export default {
     };
   },
   methods: {
+    flipBoard() {
+      console.log('flicka da wrist');
+      const newBoard = [];
+      for (let i = 0; i < 64; i += 1) newBoard.push(null);
+
+      this.board.forEach((tile, index) => {
+        let y = Math.floor(index / 8);
+        let x = index % 8;
+
+        // rotate board 180 degrees
+        x = 7 - x;
+        y = 7 - y;
+
+        const newIndex = y * 8 + x;
+        newBoard[newIndex] = tile;
+      });
+
+      this.board = newBoard;
+    },
     send() {
       fetch(`/room/${this.room}/book`, {
         method: 'POST',
@@ -124,10 +143,23 @@ export default {
         // console.log(`it is: ${this.board[yPos][xPos]}`);
         this.selectedTile = { x: xPos, y: yPos };
       } else if (this.selectedTile) {
-        const fromColumnLetter = String.fromCharCode(this.selectedTile.x + 97);
-        const toColumnLetter = String.fromCharCode(xPos + 97);
-        const fromPos = fromColumnLetter + (8 - this.selectedTile.y);
-        const toPos = toColumnLetter + (8 - yPos);
+        let fromX = this.selectedTile.x;
+        let fromY = this.selectedTile.y;
+        let toX = xPos;
+        let toY = yPos;
+
+        // Rotate board positions if black
+        if (this.userColor === 'b') {
+          fromX = 7 - fromX;
+          fromY = 7 - fromY;
+          toX = 7 - toX;
+          toY = 7 - toY;
+        }
+
+        const fromColumnLetter = String.fromCharCode(fromX + 97);
+        const toColumnLetter = String.fromCharCode(toX + 97);
+        const fromPos = fromColumnLetter + (8 - fromY);
+        const toPos = toColumnLetter + (8 - toY);
 
 
         fetch(`/room/${this.room}/movepiece`, {
@@ -145,6 +177,7 @@ export default {
             if (!resp.board) return;
             this.isUsersTurn = false;
             this.board = resp.board.flat();
+            if (this.userColor === 'b') this.flipBoard(this.board);
           })
           .catch(console.error);
 
@@ -156,10 +189,9 @@ export default {
   },
   created() {
     this.socket = this.$root.socket;
-    this.socket.on('gameData', (data) => {
-      console.log('GOT SOME DATA!!!');
-      const gameData = data.json();
+    this.socket.on('gameData', (gameData) => {
       this.board = gameData.board.flat();
+      if (this.userColor === 'b') this.flipBoard(this.board);
       this.isUsersTurn = true;
     });
 
@@ -171,10 +203,11 @@ export default {
         this.board = resp.board.flat();
 
         if (resp.playerBlack === this.$store.state.username) {
-          if (resp.turn === 'b') this.isUsersTurn = true;
-          else this.isUsersTurn = false;
+          if (resp.turn !== 'b') this.isUsersTurn = false;
+
           console.log('Is black...');
           this.userColor = 'b';
+          this.flipBoard(this.board);
         }
       })
       .catch(console.error);
