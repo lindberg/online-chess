@@ -17,7 +17,7 @@ class User {
   
     db.run("UPDATE users SET currentRoom = ? WHERE name = ?", roomName, this.name, (err) => {
       if (err) { throw new Error(err); }
-      console.log(`currentRoom for user ${this.name} updated to ${roomName}`)
+      console.log(`currentRoom for user ${this.name} updated to ${roomName}`);
     });
   }
 }

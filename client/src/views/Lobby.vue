@@ -21,7 +21,7 @@
         >
           <div class="row" style="text-align: center;">
             <h4>
-              <span style="color: grey;">{{ room.ownerName }}s room </span>
+              <span style="color: grey;">{{ room.playerWhite }}s room </span>
               <span>{{ room.name }}</span>
             </h4>
           </div>

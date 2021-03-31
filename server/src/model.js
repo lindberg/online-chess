@@ -54,6 +54,7 @@ exports.addUnregisteredSocket = (socket) => {
   return socketID;
 };
 const assignUnregisteredSocket = (socketID) => {
+  console.log('assigning unregistered socket: ' + socketID);
   const socket = unregisteredSockets[socketID];
   unregisteredSockets = Object.keys(unregisteredSockets)
     .filter((sockID) => sockID !== socketID)
@@ -147,11 +148,18 @@ exports.removeUser = (name) => {
  * @param {String} name - The name of the room.
  * @returns {void}
  */
-exports.addRoom = (name) => {
+exports.addRoom = (name, playerWhite) => {
+  console.log('TESTTTTTADWAD');
+  /*
+  console.log(unregisteredSockets[0].handshake.sessionStore.sessions);
+  console.log(unregisteredSockets[1].handshake.sessionStore.sessions);
+  console.log(unregisteredSockets[2].handshake.sessionStore.sessions);
+  */
+    
   if (this.findRoom(name)) {
     return;
   }
-  rooms[name] = new Room(name);
+  rooms[name] = new Room(name, playerWhite);
 
   db.get('SELECT name FROM rooms WHERE name = (?)', name, (_err, row) => {
     if (row !== undefined) {
@@ -180,7 +188,7 @@ exports.getRooms = () => {
   const entries = Object.entries(rooms);
 
   entries.forEach((room) => {
-    if (!rooms[room[0]].playerTwo) {
+    if (rooms[room[0]].playerBlack === '') {
       roomData.push(rooms[room[0]].getPublicData());
     }
   });

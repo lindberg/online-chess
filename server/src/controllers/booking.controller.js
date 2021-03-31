@@ -8,6 +8,7 @@ const router = express.Router();
  * @returns {void}
  */
 router.get('/roomList', (req, res) => {
+  console.log('req.session.socketID222: ' + req.session.socketID);
   const rooms = model.getRooms();
   res.status(200).json({ list: rooms });
 });
@@ -23,8 +24,9 @@ router.get('/roomList', (req, res) => {
 router.get('/room/:room/join', (req, res) => {
   console.log('room name: ' + req.params.room)
   const room = model.findRoom(req.params.room);
+  const user = model.findUser(req.session.userID);
 
-  if (model.findUser(req.session.userID).currentRoom !== req.params.room) {
+  if (user.currentRoom !== req.params.room && user.currentRoom !== '') {
     console.log(req.session.userID + ' access to ' + req.params.room + ' denied');
     return model.httpResponse(res, 404, 'User is already in a room.');
   }
@@ -33,19 +35,63 @@ router.get('/room/:room/join', (req, res) => {
     return model.httpResponse(res, 404, `No room with ID: ${req.params.room}`);
   }
 
-  if (room.ownerName !== req.session.userID) {
-    room.playerTwo = req.session.userID;
-    console.log("updated player two: " + room.playerTwo);
+  if (room.playerWhite !== req.session.userID) {
+    room.playerBlack = req.session.userID;
+    console.log("updated player two: " + room.playerBlack);
     console.log("player two: " + req.session.userID);
   }
 
-  model.findUser(req.session.userID).setCurrentRoom(room.name);
+  user.setCurrentRoom(room.name);
 
   model.httpResponse(res, 200, room.getPublicData());
 
   model.emitListToAll();
 
   return 0;
+});
+
+router.post('/room/:room/movepiece', (req, res) => {
+  const room = model.findRoom(req.params.room);
+  const user = model.findUser(req.session.userID);
+
+  if (user.currentRoom !== req.params.room) {
+    console.log(req.session.userID + ' access to ' + req.params.room + ' denied');
+    return model.httpResponse(res, 404, 'User is already in a room.');
+  }
+  if (room === undefined) {
+    console.log('room ' + req.params.room + ' does not exist');
+    return model.httpResponse(res, 404, `No room with ID: ${req.params.room}`);
+  }
+
+  let move = null;
+  if (room.chess.turn() === 'w' &&
+      room.playerWhite === req.session.userID) {
+    move = room.chess.move(req.body);
+
+    if (room.playerBlack !== '') {
+      model.findUser(room.playerBlack).socket.emit(room.getPublicData());
+      console.log('sending data to black with socketID: ' + model.findUser(room.playerBlack).socket.socketID);
+    }
+    console.log('test2');
+  }
+  else if (room.chess.turn() === 'b' &&
+           room.playerBlack === req.session.userID) {
+    move = room.chess.move(req.body);
+    model.findUser(room.playerWhite).socket.emit('gameData', room.getPublicData());
+    console.log('test3');
+  }
+
+  console.log(move);
+  console.log(move);
+  if (move !== null) {
+    model.httpResponse(res, 200, room.getPublicData());
+    console.log('sent data...');
+    return;
+  }
+
+  return model.httpResponse(res, 404, 'Something went wrong.');
+
+  // model.emitListToAll();
 });
 
 module.exports = { router };

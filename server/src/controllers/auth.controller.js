@@ -125,6 +125,7 @@ router.post('/authenticate', (req, res) => {
     // Load hash from your password DB.
     bcrypt.compare(req.body.password, user.password).then((result) => {
       if (result) {
+        console.log('req.session.socketID: ' + req.session.socketID);
         model.addUser(user.name, user.currentRoom, req.session.socketID);
 
         // Update the userID of the currently active session
@@ -132,7 +133,11 @@ router.post('/authenticate', (req, res) => {
         req.session.userID = req.body.username;
         req.session.save((error) => {
           if (error) console.error(error);
-          else console.debug(`Saved userID: ${req.session.userID}`);
+          else {
+            // console.log('testing time...');
+            // console.log(req);
+            console.debug(`Saved userID: ${req.session.userID}`);
+          }
         });
 
         model.httpResponse(res, 200, {

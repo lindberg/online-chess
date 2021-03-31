@@ -1,17 +1,18 @@
 const { Chess } = require('chess.js');
 const db = require('../database');
+const model = require('../model.js');
 
 /**
  * @class Room
  */
 class Room {
-  constructor(name, ownerName) {
+  constructor(name, playerWhite) {
     // Public data
     this.name = name;
-    this.ownerName = ownerName;
-    this.playerTwo = null;
+    this.playerWhite = playerWhite;
+    this.playerBlack = '';
     this.chess = new Chess();
-    this.chess.move({ from: 'e2', to: 'e4'});
+    // this.chess.move({ from: 'e2', to: 'e4'});
     console.log("chess board:");
     console.log(this.chess.board());
   }
@@ -19,9 +20,10 @@ class Room {
   getPublicData() {
     const publicData = {
       name: this.name,
-      ownerName: this.ownerName,
-      playerTwo: this.playerTwo,
-      chess: this.chess.board(),
+      playerWhite: this.playerWhite,
+      playerBlack: this.playerBlack,
+      board: this.chess.board(),
+      turn: this.chess.turn(),
     };
 
     return publicData;

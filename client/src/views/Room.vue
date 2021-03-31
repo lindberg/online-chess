@@ -38,8 +38,8 @@
             <rect
             v-if="selectedTile !== null"
             class="selected-tile"
-            :x="(selectedTile % 8) * 75"
-            :y="600-75 - Math.floor(selectedTile / 8) * 75"
+            :x="selectedTile.x * 75"
+            :y="selectedTile.y * 75"
             width="75"
             height="75"
             ></rect>
@@ -49,7 +49,7 @@
               v-if="tile !== null"
               :href="'svg_chess_pieces/' + tile.type + tile.color + '.svg'"
               :x="(index % 8) * 75"
-              :y="600-75 - Math.floor(index / 8) * 75"
+              :y="Math.floor(index / 8) * 75"
               width="72"
               height="72"
               :key="index"
@@ -83,7 +83,9 @@ export default {
       input: '',
       timeout: null,
       board: [],
-      selectedTile: 8,
+      selectedTile: null,
+      userColor: 'w',
+      isUsersTurn: true,
     };
   },
   methods: {
@@ -103,17 +105,77 @@ export default {
     cancel() {
       this.$router.push('/lobby');
     },
-    boardClick: function (event) {
-      
-    }
+    boardClick(event) {
+      if (!this.isUsersTurn) return;
+
+      const xPos = Math.floor(event.offsetX / 75);
+      const yPos = Math.floor(event.offsetY / 75);
+
+      if (this.selectedTile && this.selectedTile.x === xPos && this.selectedTile.y === yPos) {
+        this.selectedTile = null;
+        return;
+      }
+
+      // console.log(this.board);
+      // console.log(yPos);
+      // console.log(xPos);
+      const tile = this.board[yPos * 8 + xPos];
+      if (tile && tile.color === this.userColor && this.isUsersTurn) {
+        // console.log(`it is: ${this.board[yPos][xPos]}`);
+        this.selectedTile = { x: xPos, y: yPos };
+      } else if (this.selectedTile) {
+        const fromColumnLetter = String.fromCharCode(this.selectedTile.x + 97);
+        const toColumnLetter = String.fromCharCode(xPos + 97);
+        const fromPos = fromColumnLetter + (8 - this.selectedTile.y);
+        const toPos = toColumnLetter + (8 - yPos);
+
+
+        fetch(`/room/${this.room}/movepiece`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: fromPos,
+            to: toPos,
+          }),
+        })
+          .then(resp => resp.json())
+          .then((resp) => {
+            if (!resp.board) return;
+            this.isUsersTurn = false;
+            this.board = resp.board.flat();
+          })
+          .catch(console.error);
+
+        this.selectedTile = null;
+      }
+
+      console.log(`selected tile: ${this.selectedTile}`);
+    },
   },
   created() {
+    this.socket = this.$root.socket;
+    this.socket.on('gameData', (data) => {
+      console.log('GOT SOME DATA!!!');
+      const gameData = data.json();
+      this.board = gameData.board.flat();
+      this.isUsersTurn = true;
+    });
+
     fetch(`/room/${this.room}/join`)
       .then(resp => resp.json())
       .then((resp) => {
         console.log(resp);
-        console.log(resp.chess);
-        this.board = resp.chess.flat();
+        console.log(resp.board);
+        this.board = resp.board.flat();
+
+        if (resp.playerBlack === this.$store.state.username) {
+          if (resp.turn === 'b') this.isUsersTurn = true;
+          else this.isUsersTurn = false;
+          console.log('Is black...');
+          this.userColor = 'b';
+        }
       })
       .catch(console.error);
   },
