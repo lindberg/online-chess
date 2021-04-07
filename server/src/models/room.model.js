@@ -25,6 +25,7 @@ class Room {
       board: this.chess.board(),
       turn: this.chess.turn(),
       winner: this.getWinner(),
+      gameStatus: this.getGameStatus(),
     };
 
     return publicData;
@@ -42,6 +43,17 @@ class Room {
     }
     console.log('no winner yet');
     return 'none';
+  }
+
+  getGameStatus() {
+    let winner = this.getWinner();
+    if (winner === 'none') {
+      if (this.chess.turn() === 'w') return "White to move...";
+      else return "Black to move...";
+    }
+    else if (winner === 'draw') return "Game ended. Draw.";
+    else if (winner === 'w') return "Game ended. White won.";
+    else if (winner === 'b') return "Game ended. Black won.";
   }
 }
 

@@ -58,14 +58,7 @@
         </svg>
       </div>
 
-      <form v-on:submit.prevent="send()">
-        <input v-model="input" class="form-control" type="text" required autofocus />
-
-        <div class="row" style="text-align: center; margin-top: 10px;">
-          <input type="submit" value="Ok">
-          <button type="button" v-on:click="cancel()">Cancel</button>
-        </div>
-      </form>
+      <div style="text-align:center">{{ gameStatus }}</div>
     </section>
   </div>
 </template>
@@ -86,6 +79,7 @@ export default {
       selectedTile: null,
       userColor: 'w',
       isUsersTurn: true,
+      gameStatus: 'White to move...',
     };
   },
   methods: {
@@ -181,6 +175,7 @@ export default {
             if (resp.winner !== 'none') {
               this.$store.commit('setCurrentRoom', '');
             }
+            this.gameStatus = resp.gameStatus;
           })
           .catch(console.error);
 
@@ -199,6 +194,7 @@ export default {
       if (gameData.winner !== 'none') {
         this.$store.commit('setCurrentRoom', '');
       }
+      this.gameStatus = gameData.gameStatus;
     });
 
     fetch(`/room/${this.room}/join`)
