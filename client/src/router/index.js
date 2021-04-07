@@ -27,6 +27,7 @@ const router = new VueRouter({
 // Setup Authentication guard
 router.beforeEach((to, from, next) => {
   if (store.state.isAuthenticated) {
+    // Player can't leave active room
     if (store.state.currentRoom !== '' && to.path !== `/room/${store.state.currentRoom}`) {
       next(`/room/${store.state.currentRoom}`);
       return;

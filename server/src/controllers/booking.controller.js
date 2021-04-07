@@ -1,5 +1,6 @@
 const express = require('express');
 const model = require('../model.js');
+const db = require('../database.js');
 
 const router = express.Router();
 
@@ -79,6 +80,34 @@ router.post('/room/:room/movepiece', (req, res) => {
     move = room.chess.move(req.body);
     model.findUser(room.playerWhite).socket.emit('gameData', room.getPublicData());
     console.log('test3');
+  }
+  
+  // Game over
+  let winner = room.getWinner();
+  if (winner !== 'none') {
+    console.log('Game over... Updating current rooms.');
+    model.findUser(room.playerBlack).currentRoom = '';
+    model.findUser(room.playerWhite).currentRoom = '';
+
+    if (winner === 'w') {
+      model.findUser(room.playerWhite).addWin();
+      model.findUser(room.playerBlack).addLoss();
+    }
+    else if (winner === 'b') {
+      model.findUser(room.playerWhite).addLoss();
+      model.findUser(room.playerBlack).addWin();
+    }
+    else if (winner === 'draw') {
+      model.findUser(room.playerWhite).addDraw();
+      model.findUser(room.playerBlack).addDraw();
+    }
+
+    let winnerName = 'draw';
+    if (winner === 'w') winnerName = room.playerWhite;
+    else if (winner === 'b') winnerName = room.playerBlack;
+    db.run("INSERT INTO games (white, black, fen, winner) VALUES (?, ?, ?, ?)", room.playerWhite, room.playerBlack, room.chess.fen(), winnerName, (err) => {
+      if (err) { throw new Error(err); }
+    });
   }
 
   console.log(move);

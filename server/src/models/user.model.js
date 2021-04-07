@@ -20,6 +20,24 @@ class User {
       console.log(`currentRoom for user ${this.name} updated to ${roomName}`);
     });
   }
+
+  addWin() {
+    db.run("UPDATE users SET wins = wins + 1 WHERE name = ?", this.name, (err) => {
+      if (err) { throw new Error(err); }
+    });
+  }
+
+  addLoss() {
+    db.run("UPDATE users SET losses = losses + 1 WHERE name = ?", this.name, (err) => {
+      if (err) { throw new Error(err); }
+    });
+  }
+
+  addDraw() {
+    db.run("UPDATE users SET draws = draws + 1 WHERE name = ?", this.name, (err) => {
+      if (err) { throw new Error(err); }
+    });
+  }
 }
 
 module.exports = User;

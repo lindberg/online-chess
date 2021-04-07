@@ -8,8 +8,10 @@ db.serialize(() => {
 
   db.run('DROP TABLE IF EXISTS users');
   db.run('DROP TABLE IF EXISTS rooms');
+  db.run('DROP TABLE IF EXISTS games');
   db.run('CREATE TABLE users(name TEXT PRIMARY KEY, password TEXT, wins INTEGER DEFAULT 0, losses INTEGER DEFAULT 0, draws INTEGER DEFAULT 0, currentRoom TEXT DEFAULT "")');
   db.run('CREATE TABLE rooms(name TEXT PRIMARY KEY)');
+  db.run('CREATE TABLE games(id INTEGER PRIMARY KEY AUTOINCREMENT, white TEXT, black TEXT, fen TEXT, winner TEXT)');
 
 
   

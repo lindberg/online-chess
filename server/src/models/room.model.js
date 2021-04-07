@@ -24,9 +24,24 @@ class Room {
       playerBlack: this.playerBlack,
       board: this.chess.board(),
       turn: this.chess.turn(),
+      winner: this.getWinner(),
     };
 
     return publicData;
+  }
+
+  getWinner() {
+    if (this.chess.game_over()) {
+      if (this.chess.in_checkmate()) {
+        if (this.chess.turn() === 'b') return 'w';
+        else return 'b';
+      }
+      else {
+        return 'draw';
+      }
+    }
+    console.log('no winner yet');
+    return 'none';
   }
 }
 

@@ -27,14 +27,16 @@ export default {
     newRoomName: '',
   }),
   created() {
+    /*
     this.socket = this.$root.socket;
     this.socket.on('msg', (msg) => {
       // const msgJson = msg.json();
       // console.log(msg);
-      this.updateUserRooms(msg);
+      // this.updateUserRooms(msg);
       // this.rooms = msg;
       // this.entries = [...this.entries, msg];
     });
+    */
 
     fetch('/api/isAuthenticated')
       .then(res => res.json())
@@ -47,7 +49,7 @@ export default {
           this.userWins = resp.userWins;
           this.userLosses = resp.userLosses;
           this.userDraws = resp.userDraws;
-          this.updateUserRooms(resp.list);
+          // this.updateUserRooms(resp.list);
           this.loaded = true;
         } else {
           this.$store.commit('setIsAuthenticated', false);

@@ -178,6 +178,9 @@ export default {
             this.isUsersTurn = false;
             this.board = resp.board.flat();
             if (this.userColor === 'b') this.flipBoard(this.board);
+            if (resp.winner !== 'none') {
+              this.$store.commit('setCurrentRoom', '');
+            }
           })
           .catch(console.error);
 
@@ -193,6 +196,9 @@ export default {
       this.board = gameData.board.flat();
       if (this.userColor === 'b') this.flipBoard(this.board);
       this.isUsersTurn = true;
+      if (gameData.winner !== 'none') {
+        this.$store.commit('setCurrentRoom', '');
+      }
     });
 
     fetch(`/room/${this.room}/join`)
